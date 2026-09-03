@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CorrigeAI</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                <rect width="40" height="40" rx="12" fill="#10B981"/>
+                <path d="M12 20C12 15.58 15.58 12 20 12C24.42 12 28 15.58 28 20" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="20" cy="20" r="3" fill="#FFFFFF"/>
+            </svg>
+            <span>CorrigeAI</span>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="provas.html" class="nav-item">
+                <span class="nav-icon">📋</span>
+                <span>Provas</span>
+            </a>
+            <a href="resultados.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>Resultados</span>
+            </a>
+            <a href="relatorios.html" class="nav-item">
+                <span class="nav-icon">📄</span>
+                <span>Relatórios</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="nav-item logout" onclick="logout()">
+                <span class="nav-icon">🚪</span>
+                <span>Sair</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1 id="greeting">Bem-vindo!</h1>
+                <p id="subtitle">Acompanhe suas provas e resultados</p>
+            </div>
+
+            <div class="header-right">
+                <div class="user-profile">
+                    <div class="avatar" id="avatar">P</div>
+                    <div class="user-info">
+                        <p class="user-name" id="username">Professor</p>
+                        <p class="user-role" id="userrole">Professor</p>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- CONTENT -->
+        <div class="dashboard-content">
+            <!-- STATS -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Provas Criadas</h3>
+                        <span class="stat-icon">📄</span>
+                    </div>
+                    <div class="stat-value">12</div>
+                    <p class="stat-trend">↑ 2 esta semana</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Alunos</h3>
+                        <span class="stat-icon">👥</span>
+                    </div>
+                    <div class="stat-value">400</div>
+                    <p class="stat-trend">↑ 15 inscrições</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Desempenho Médio</h3>
+                        <span class="stat-icon">📈</span>
+                    </div>
+                    <div class="stat-value">81%</div>
+                    <p class="stat-trend">↑ 5% vs mês anterior</p>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <h3>Score TRI Médio</h3>
+                        <span class="stat-icon">🎯</span>
+                    </div>
+                    <div class="stat-value">650</div>
+                    <p class="stat-trend">↑ 20 pontos</p>
+                </div>
+            </div>
+
+            <!-- CHARTS SECTION -->
+            <div class="charts-section">
+                <div class="chart-card">
+                    <h3>Provas Recentes</h3>
+                    <div class="recent-list">
+                        <div class="recent-item">
+                            <div class="recent-info">
+                                <p class="recent-title">Simulado ENEM 2024</p>
+                                <p class="recent-date">02/09/2024</p>
+                            </div>
+                            <div class="recent-stats">
+                                <p class="recent-count">145 alunos</p>
+                            </div>
+                        </div>
+                        <div class="recent-item">
+                            <div class="recent-info">
+                                <p class="recent-title">Prova de Matemática</p>
+                                <p class="recent-date">25/08/2024</p>
+                            </div>
+                            <div class="recent-stats">
+                                <p class="recent-count">89 alunos</p>
+                            </div>
+                        </div>
+                        <div class="recent-item">
+                            <div class="recent-info">
+                                <p class="recent-title">Avaliação de Português</p>
+                                <p class="recent-date">18/08/2024</p>
+                            </div>
+                            <div class="recent-stats">
+                                <p class="recent-count">134 alunos</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <h3>Atividade</h3>
+                    <div class="progress-section">
+                        <div class="progress-item">
+                            <p class="progress-label">Provas finalizadas</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 80%"></div>
+                            </div>
+                            <p class="progress-text">12/15</p>
+                        </div>
+                        <div class="progress-item">
+                            <p class="progress-label">Resultados processados</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 90%"></div>
+                            </div>
+                            <p class="progress-text">180/200</p>
+                        </div>
+                        <div class="progress-item">
+                            <p class="progress-label">Relatórios gerados</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: 67%"></div>
+                            </div>
+                            <p class="progress-text">8/12</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ALERT -->
+            <div class="alert-section">
+                <div class="alert">
+                    <span class="alert-icon">⚠️</span>
+                    <div class="alert-content">
+                        <h4>Atenção!</h4>
+                        <p>Você tem 3 provas para publicar nos próximos 2 dias.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = JSON.parse(localStorage.getItem('user') || '{}');
+            
+            if (!user.email) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            const firstName = user.nome.charAt(0).toUpperCase();
+            const roleText = {
+                'professor': 'Professor',
+                'coordenador': 'Coordenador',
+                'diretor': 'Diretor'
+            }[user.tipo] || 'Usuário';
+
+            document.getElementById('avatar').textContent = firstName;
+            document.getElementById('username').textContent = user.nome;
+            document.getElementById('userrole').textContent = roleText;
+            document.getElementById('greeting').textContent = `Bem-vindo, ${user.nome.split(' ')[0]}!`;
+
+            const subtitles = {
+                'professor': 'Acompanhe suas provas e o desempenho dos alunos',
+                'coordenador': 'Veja o desempenho de sua coordenação',
+                'diretor': 'Visão geral de toda a escola'
+            };
+            document.getElementById('subtitle').textContent = subtitles[user.tipo] || 'Acompanhe suas provas';
+        });
+
+        function logout() {
+            localStorage.removeItem('user');
+            window.location.href = 'login.html';
+        }
+    </script>
+</body>
+</html>

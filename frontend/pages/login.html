@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - CorrigeAI</title>
+    <link rel="stylesheet" href="../CSS/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+    <div class="login-container">
+        <!-- Left Side - Branding -->
+        <div class="login-brand">
+            <div class="brand-content">
+                <svg width="60" height="60" viewBox="0 0 40 40" fill="none">
+                    <rect width="40" height="40" rx="12" fill="#FFFFFF"/>
+                    <path d="M12 20C12 15.58 15.58 12 20 12C24.42 12 28 15.58 28 20" stroke="#10B981" stroke-width="2.5" stroke-linecap="round"/>
+                    <circle cx="20" cy="20" r="3" fill="#10B981"/>
+                </svg>
+                <h1>CorrigeAI</h1>
+                <p>Correção Inteligente de Provas</p>
+            </div>
+
+            <div class="brand-features">
+                <div class="brand-feature">
+                    <span class="feature-icon">⚡</span>
+                    <span>Correção em Segundos</span>
+                </div>
+                <div class="brand-feature">
+                    <span class="feature-icon">📊</span>
+                    <span>Análise Completa</span>
+                </div>
+                <div class="brand-feature">
+                    <span class="feature-icon">🔒</span>
+                    <span>100% Seguro</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="login-form-container">
+            <form class="login-form" onsubmit="handleLogin(event)">
+                <div class="form-header">
+                    <h2>Bem-vindo de volta</h2>
+                    <p>Acesse sua conta para continuar</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" placeholder="seu@email.com" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Senha</label>
+                    <input type="password" id="password" placeholder="••••••••" required>
+                </div>
+
+                <div class="form-footer">
+                    <label class="remember-me">
+                        <input type="checkbox">
+                        <span>Lembrar-me</span>
+                    </label>
+                    <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                </div>
+
+                <button type="submit" class="btn-primary btn-full">Entrar</button>
+
+                <p class="form-divider">ou</p>
+
+                <div class="demo-accounts">
+                    <p class="demo-label">Demo Accounts:</p>
+                    <div class="demo-buttons">
+                        <button type="button" class="demo-btn" onclick="setDemo('prof@escola.com')">👨‍🏫 Professor</button>
+                        <button type="button" class="demo-btn" onclick="setDemo('coord@escola.com')">👔 Coordenador</button>
+                        <button type="button" class="demo-btn" onclick="setDemo('diretor@escola.com')">🏫 Diretor</button>
+                    </div>
+                </div>
+
+                <p class="form-signup">
+                    Não tem conta? <a href="#">Comece grátis</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function setDemo(email) {
+            document.getElementById('email').value = email;
+            document.getElementById('password').value = '123456';
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            
+            localStorage.setItem('user', JSON.stringify({
+                email: email,
+                nome: email.split('@')[0],
+                tipo: email.includes('prof') ? 'professor' : email.includes('coord') ? 'coordenador' : 'diretor'
+            }));
+
+            window.location.href = '../pages/dashboard.html';
+        }
+    </script>
+</body>
+</html>
