@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - CorrigeAI</title>
-    <link rel="stylesheet" href="../CSS/style.css">
+    <link rel="stylesheet" href="../CSS/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=Space+Grotesk:wght@700&display=swap" rel="stylesheet">
 </head>
 <body class="login-page">
@@ -63,30 +63,64 @@
                 </div>
 
                 <p class="form-signup">
-                    Não tem conta? <a href="#">Comece grátis</a>
+                    Não tem conta? <a href="cadastro.html">Comece grátis</a>
                 </p>
             </form>
         </div>
     </div>
 
-    <script>
-        function setDemo(email) {
-            document.getElementById('email').value = email;
-            document.getElementById('password').value = '123456';
-        }
+<script>
+    function setDemo(email) {
+        document.getElementById("email").value = email;
+        document.getElementById("password").value = "123456";
+    }
 
-        function handleLogin(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            
-            localStorage.setItem('user', JSON.stringify({
-                email: email,
-                nome: email.split('@')[0],
-                tipo: email.includes('prof') ? 'professor' : email.includes('coord') ? 'coordenador' : 'diretor'
-            }));
+    async function handleLogin(e) {
+        e.preventDefault();
 
-            window.location.href = '../pages/dashboard.html';
+        const email = document.getElementById("email").value.trim();
+        const senha = document.getElementById("password").value;
+
+        try {
+            const resposta = await fetch(
+                "http://localhost:3000/api/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        senha: senha
+                    })
+                }
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                throw new Error(
+                    dados.mensagem || "E-mail ou senha incorretos."
+                );
+            }
+
+    
+            localStorage.setItem("token", dados.token);
+
+            localStorage.setItem(
+                "usuario",
+                JSON.stringify(dados.usuario)
+            );
+
+  
+            window.location.href = "dashboard.html";
+
+        } catch (error) {
+            console.error("Erro no login:", error);
+
+            alert(error.message);
         }
-    </script>
+    }
+</script>
 </body>
 </html>
