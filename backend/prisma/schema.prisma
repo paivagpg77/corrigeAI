@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TipoUsuario {
+  PROFESSOR
+  COORDENADOR
+  DIRETOR
+}
+
+enum StatusProva {
+  RASCUNHO
+  PUBLICADA
+  FINALIZADA
+}
+
+model Usuario {
+  id           Int         @id @default(autoincrement())
+  nome         String
+  email        String      @unique
+  senha        String
+  tipo         TipoUsuario
+  ativo        Boolean     @default(true)
+  criadoEm     DateTime    @default(now())
+  atualizadoEm DateTime    @updatedAt
+
+  provas       Prova[]
+}
+
+model Disciplina {
+  id        Int       @id @default(autoincrement())
+  nome      String    @unique
+  criadoEm  DateTime  @default(now())
+
+  provas    Prova[]
+}
+
+model Prova {
+  id            Int          @id @default(autoincrement())
+  titulo        String
+  totalQuestoes Int
+  status        StatusProva  @default(RASCUNHO)
+  criadoEm      DateTime     @default(now())
+  atualizadoEm  DateTime     @updatedAt
+
+  professorId   Int
+  professor     Usuario      @relation(fields: [professorId], references: [id])
+
+  disciplinaId  Int
+  disciplina    Disciplina   @relation(fields: [disciplinaId], references: [id])
+
+  questoes      Questao[]
+}
+
+model Questao {
+  id            Int      @id @default(autoincrement())
+  numero        Int
+  enunciado     String?
+
+  alternativaA  String?
+  alternativaB  String?
+  alternativaC  String?
+  alternativaD  String?
+  alternativaE  String?
+
+  resposta      String?
+
+  provaId       Int
+  prova         Prova    @relation(fields: [provaId], references: [id], onDelete: Cascade)
+
+  @@unique([provaId, numero])
+}
