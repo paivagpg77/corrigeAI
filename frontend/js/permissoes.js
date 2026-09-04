@@ -1,284 +1,185 @@
 // ============================================
-// SISTEMA DE PERMISSÕES - CORRIGEAI
+// SISTEMA DE PERMISSÕES - CORRIGEAI v2
 // ============================================
 //
-// PROFESSOR
-// Dashboard, Provas e Resultados
+// DIRETOR:
+//   Dashboard, Gestão (pessoas), Turmas, Alunos,
+//   Provas, Resultados, Relatórios
+//   → Pode cadastrar professores, coordenadores,
+//     turmas e alunos. Vê escola inteira.
 //
-// COORDENADOR
-// Dashboard, Provas, Resultados e Relatórios
+// COORDENADOR:
+//   Dashboard, Turmas, Alunos,
+//   Provas, Resultados, Relatórios
+//   → Pode cadastrar turmas e alunos da coordenação.
+//     Vê dados da sua coordenação.
 //
-// DIRETOR
-// Dashboard, Provas, Resultados e Relatórios
-// ============================================
-
+// PROFESSOR:
+//   Dashboard, Provas, Resultados
+//   → Só vê e cria provas das turmas dele.
+//     Só vê resultados das turmas dele.
+//     SEM relatórios, SEM gestão, SEM turmas/alunos.
+//
 
 const PERMISSOES = {
 
-    PROFESSOR: {
+    professor: {
         paginas: [
-            "dashboard.html",
-            "provas.html",
-            "resultados.html"
+            'dashboard.html',
+            'provas.html',
+            'resultados.html'
         ],
-
-        label: "Professor",
-
-        dashboardTitulo: "Suas Turmas",
-
-        dashboardSubtitulo:
-            "Acompanhe suas provas e o desempenho dos seus alunos"
+        label: 'Professor',
+        dashboardTitulo: 'Suas Turmas',
+        dashboardSubtitulo: 'Acompanhe suas provas e o desempenho dos seus alunos'
     },
 
-
-    COORDENADOR: {
+    coordenador: {
         paginas: [
-            "dashboard.html",
-            "provas.html",
-            "resultados.html",
-            "relatorios.html"
+            'dashboard.html',
+            'turmas.html',
+            'alunos.html',
+            'provas.html',
+            'resultados.html',
+            'relatorios.html'
         ],
-
-        label: "Coordenador",
-
-        dashboardTitulo: "Sua Coordenação",
-
-        dashboardSubtitulo:
-            "Visão geral do desempenho da sua coordenação"
+        label: 'Coordenador',
+        dashboardTitulo: 'Sua Coordenação',
+        dashboardSubtitulo: 'Gerencie turmas, alunos e acompanhe o desempenho'
     },
 
-
-    DIRETOR: {
+    diretor: {
         paginas: [
-            "dashboard.html",
-            "provas.html",
-            "resultados.html",
-            "relatorios.html"
+            'dashboard.html',
+            'gestao.html',
+            'turmas.html',
+            'alunos.html',
+            'provas.html',
+            'resultados.html',
+            'relatorios.html'
         ],
-
-        label: "Diretor",
-
-        dashboardTitulo: "Visão Geral da Escola",
-
-        dashboardSubtitulo:
-            "Acompanhe todas as turmas, provas e desempenho da escola"
+        label: 'Diretor',
+        dashboardTitulo: 'Visão Geral da Escola',
+        dashboardSubtitulo: 'Gerencie equipe, turmas, alunos e acompanhe toda a escola'
     }
-
 };
 
 
 // ============================================
-// PEGAR USUÁRIO LOGADO
+// TODOS OS ITENS DO MENU
 // ============================================
 
-function obterUsuario() {
-
-    try {
-
-        return JSON.parse(
-            localStorage.getItem("usuario") || "{}"
-        );
-
-    } catch (error) {
-
-        console.error(
-            "Erro ao ler usuário:",
-            error
-        );
-
-        return {};
-
-    }
-}
+const MENU_ITENS = [
+    { pagina: 'dashboard.html',  icone: '📊', label: 'Dashboard' },
+    { pagina: 'gestao.html',     icone: '👥', label: 'Gestão' },
+    { pagina: 'turmas.html',     icone: '🏫', label: 'Turmas' },
+    { pagina: 'alunos.html',     icone: '🎓', label: 'Alunos' },
+    { pagina: 'provas.html',     icone: '📋', label: 'Provas' },
+    { pagina: 'resultados.html', icone: '📈', label: 'Resultados' },
+    { pagina: 'relatorios.html', icone: '📄', label: 'Relatórios' }
+];
 
 
 // ============================================
-// VERIFICAR ACESSO
+// VERIFICAR LOGIN E PERMISSÃO
 // ============================================
 
 function verificarAcesso() {
 
-    const usuario = obterUsuario();
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const token = localStorage.getItem('token');
 
-    const token = localStorage.getItem("token");
-
-
-    // Não está logado
-    if (!token || !usuario.email) {
-
-        window.location.href = "login.html";
-
+    if (!user.email && !token) {
+        window.location.href = 'login.html';
         return null;
     }
 
-
-    // Tipo do usuário
-    const tipo = (
-        usuario.tipo || "PROFESSOR"
-    ).toUpperCase();
-
-
-    // Permissão do tipo
+    const tipo = (user.tipo || 'professor').toLowerCase();
+    const paginaAtual = window.location.pathname.split('/').pop();
     const permissao = PERMISSOES[tipo];
 
-
-    // Tipo desconhecido
-    if (!permissao) {
-
-        console.error(
-            "Tipo de usuário inválido:",
-            tipo
-        );
-
-        localStorage.removeItem("token");
-        localStorage.removeItem("usuario");
-
-        window.location.href = "login.html";
-
+    if (permissao && !permissao.paginas.includes(paginaAtual)) {
+        alert('Você não tem permissão para acessar esta página.');
+        window.location.href = 'dashboard.html';
         return null;
     }
 
-
-    // Página atual
-    const paginaAtual =
-        window.location.pathname
-            .split("/")
-            .pop();
-
-
-    // Verifica se pode acessar
-    if (
-        !permissao.paginas.includes(
-            paginaAtual
-        )
-    ) {
-
-        alert(
-            "Você não tem permissão para acessar esta página."
-        );
-
-        window.location.href =
-            "dashboard.html";
-
-        return null;
-    }
-
-
-    return {
-        usuario,
-        tipo,
-        permissao
-    };
+    return { user, tipo, permissao };
 }
 
 
 // ============================================
-// MONTAR SIDEBAR
+// MONTAR SIDEBAR DINÂMICA
 // ============================================
 
 function montarSidebar(tipo) {
 
-    const permissao =
-        PERMISSOES[tipo];
+    const permissao = PERMISSOES[tipo];
+    const paginaAtual = window.location.pathname.split('/').pop();
 
+    const itensPermitidos = MENU_ITENS.filter(item =>
+        permissao.paginas.includes(item.pagina)
+    );
 
-    if (!permissao) {
-        return;
-    }
-
-
-    const paginaAtual =
-        window.location.pathname
-            .split("/")
-            .pop();
-
-
-    const todosItens = [
-
-        {
-            pagina: "dashboard.html",
-            icone: "📊",
-            label: "Dashboard"
-        },
-
-        {
-            pagina: "provas.html",
-            icone: "📋",
-            label: "Provas"
-        },
-
-        {
-            pagina: "resultados.html",
-            icone: "📈",
-            label: "Resultados"
-        },
-
-        {
-            pagina: "relatorios.html",
-            icone: "📄",
-            label: "Relatórios"
-        }
-
-    ];
-
-
-    const itensPermitidos =
-        todosItens.filter(
-            item =>
-                permissao.paginas.includes(
-                    item.pagina
-                )
-        );
-
-
-    const sidebarNav =
-        document.querySelector(
-            ".sidebar-nav"
-        );
-
-
-    if (!sidebarNav) {
-        return;
-    }
-
-
-    sidebarNav.innerHTML = "";
-
-
-    itensPermitidos.forEach(item => {
-
-        const link =
-            document.createElement("a");
-
-        link.href = item.pagina;
-
-        link.className = "nav-item";
-
-
-        if (
-            item.pagina === paginaAtual
-        ) {
-
-            link.classList.add("active");
-
-        }
-
-
-        link.innerHTML = `
-            <span class="nav-icon">
-                ${item.icone}
-            </span>
-
-            <span>
-                ${item.label}
-            </span>
+    const navHTML = itensPermitidos.map(item => {
+        const ativo = paginaAtual === item.pagina ? ' active' : '';
+        return `
+            <a href="${item.pagina}" class="nav-item${ativo}">
+                <span class="nav-icon">${item.icone}</span>
+                <span>${item.label}</span>
+            </a>
         `;
+    }).join('');
+
+    const sidebarNav = document.querySelector('.sidebar-nav');
+    if (sidebarNav) {
+        sidebarNav.innerHTML = navHTML;
+    }
+}
 
 
-        sidebarNav.appendChild(link);
+// ============================================
+// ATUALIZAR HEADER COM INFO DO USUÁRIO
+// ============================================
 
-    });
+function atualizarHeader(user, tipo) {
 
+    const permissao = PERMISSOES[tipo];
+    const nome = user.nome || user.email?.split('@')[0] || 'Usuário';
+    const primeiraLetra = nome.charAt(0).toUpperCase();
+
+    const avatar = document.getElementById('avatar');
+    if (avatar) avatar.textContent = primeiraLetra;
+
+    const username = document.getElementById('username');
+    if (username) username.textContent = nome;
+
+    const userrole = document.getElementById('userrole');
+    if (userrole) userrole.textContent = permissao.label;
+
+    const greeting = document.getElementById('greeting');
+    if (greeting) greeting.textContent = `Bem-vindo, ${nome.split(' ')[0]}!`;
+
+    const subtitle = document.getElementById('subtitle');
+    if (subtitle) subtitle.textContent = permissao.dashboardSubtitulo;
+}
+
+
+// ============================================
+// INICIALIZAR
+// ============================================
+
+function inicializarPermissoes() {
+
+    const acesso = verificarAcesso();
+    if (!acesso) return null;
+
+    const { user, tipo, permissao } = acesso;
+
+    montarSidebar(tipo);
+    atualizarHeader(user, tipo);
+
+    return { user, tipo, permissao };
 }
 
 
@@ -287,36 +188,16 @@ function montarSidebar(tipo) {
 // ============================================
 
 function logout() {
-
-    localStorage.removeItem("token");
-
-    localStorage.removeItem("usuario");
-
-    window.location.href =
-        "login.html";
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    window.location.href = 'login.html';
 }
 
 
 // ============================================
-// INICIALIZAÇÃO
+// AUTO-INICIALIZAR
 // ============================================
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const acesso =
-            verificarAcesso();
-
-
-        if (!acesso) {
-            return;
-        }
-
-
-        montarSidebar(
-            acesso.tipo
-        );
-
-    }
-);
+document.addEventListener('DOMContentLoaded', function () {
+    inicializarPermissoes();
+});
