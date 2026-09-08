@@ -1,6 +1,6 @@
 import "dotenv/config";
 import bcrypt from "bcryptjs";
-import prisma from "./prisma.js";
+import prisma from "../prisma.js";
 
 async function main() {
     console.log("🌱 Iniciando seed do banco...");
@@ -30,10 +30,10 @@ async function main() {
         }
     });
 
-    console.log(`🏫 Escola criada/encontrada: ${escola.nome} (ID: ${escola.id})`);
+    console.log(`🏫 Escola: ${escola.nome} (ID: ${escola.id})`);
 
     // =========================================
-    // PROFESSOR
+    // USUÁRIOS
     // =========================================
 
     await prisma.usuario.upsert({
@@ -52,10 +52,6 @@ async function main() {
         }
     });
 
-    // =========================================
-    // COORDENADOR
-    // =========================================
-
     await prisma.usuario.upsert({
         where: {
             email: "coord@escola.com"
@@ -71,10 +67,6 @@ async function main() {
             escolaId: escola.id
         }
     });
-
-    // =========================================
-    // DIRETOR
-    // =========================================
 
     await prisma.usuario.upsert({
         where: {
@@ -120,7 +112,7 @@ async function main() {
     for (const nome of disciplinas) {
         const existente = await prisma.disciplina.findFirst({
             where: {
-                nome
+                nome: nome
             }
         });
 
@@ -136,7 +128,7 @@ async function main() {
         } else {
             await prisma.disciplina.create({
                 data: {
-                    nome,
+                    nome: nome,
                     escolaId: escola.id
                 }
             });
@@ -144,8 +136,7 @@ async function main() {
     }
 
     // =========================================
-    // GARANTIR QUE DISCIPLINAS ANTIGAS
-    // TAMBÉM TENHAM ESCOLA
+    // VINCULAR DISCIPLINAS EXISTENTES
     // =========================================
 
     await prisma.disciplina.updateMany({
@@ -159,9 +150,9 @@ async function main() {
 
     console.log("✅ Escola criada/vinculada.");
     console.log("✅ Usuários criados/atualizados.");
-    console.log("✅ Usuários antigos vinculados à escola.");
+    console.log("✅ Usuários antigos vinculados.");
     console.log("✅ Disciplinas criadas/atualizadas.");
-    console.log("✅ Disciplinas antigas vinculadas à escola.");
+    console.log("✅ Disciplinas antigas vinculadas.");
     console.log("🎉 Seed concluído com sucesso!");
 }
 

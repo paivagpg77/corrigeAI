@@ -18,55 +18,134 @@ enum StatusProva {
   FINALIZADA
 }
 
-model Usuario {
-  id           Int         @id @default(autoincrement())
+model Escola {
+  id           Int          @id @default(autoincrement())
   nome         String
-  email        String      @unique
+  cnpj         String?      @unique
+  email        String?
+  telefone     String?
+  endereco     String?
+  logo         String?
+  criadoEm     DateTime     @default(now())
+  atualizadoEm DateTime     @updatedAt
+
+  usuarios     Usuario[]
+  turmas       Turma[]
+  disciplinas  Disciplina[]
+}
+
+model Usuario {
+  id           Int              @id @default(autoincrement())
+  nome         String
+  email        String           @unique
   senha        String
   tipo         TipoUsuario
-  ativo        Boolean     @default(true)
-  criadoEm     DateTime    @default(now())
-  atualizadoEm DateTime    @updatedAt
+  ativo        Boolean          @default(true)
+
+  escolaId     Int?
+  escola       Escola?          @relation(fields: [escolaId], references: [id])
+
+  criadoEm     DateTime         @default(now())
+  atualizadoEm DateTime         @updatedAt
 
   provas       Prova[]
+  turmas       ProfessorTurma[]
+}
+
+model Turma {
+  id           Int              @id @default(autoincrement())
+  codigo       String
+  nome         String
+  serie        String?
+  turno        String?
+
+  escolaId     Int
+  escola       Escola           @relation(fields: [escolaId], references: [id])
+
+  criadoEm     DateTime         @default(now())
+  atualizadoEm DateTime         @updatedAt
+
+  alunos       Aluno[]
+  professores  ProfessorTurma[]
+  provas       Prova[]
+
+  @@unique([escolaId, codigo])
+}
+
+model ProfessorTurma {
+  id           Int      @id @default(autoincrement())
+
+  professorId  Int
+  professor    Usuario  @relation(fields: [professorId], references: [id], onDelete: Cascade)
+
+  turmaId      Int
+  turma        Turma    @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+
+  criadoEm     DateTime @default(now())
+
+  @@unique([professorId, turmaId])
+}
+
+model Aluno {
+  id              Int       @id @default(autoincrement())
+  matricula       String
+  nome            String
+  dataNascimento  DateTime?
+  responsavel     String?
+  emailResponsavel String?
+
+  turmaId         Int
+  turma           Turma     @relation(fields: [turmaId], references: [id], onDelete: Cascade)
+
+  criadoEm        DateTime  @default(now())
+  atualizadoEm    DateTime  @updatedAt
+
+  @@unique([turmaId, matricula])
 }
 
 model Disciplina {
-  id        Int       @id @default(autoincrement())
-  nome      String    @unique
-  criadoEm  DateTime  @default(now())
+  id           Int       @id @default(autoincrement())
+  nome         String
 
-  provas    Prova[]
+  escolaId     Int?
+  escola       Escola?   @relation(fields: [escolaId], references: [id])
+
+  criadoEm     DateTime  @default(now())
+
+  provas       Prova[]
+
+  @@unique([escolaId, nome])
 }
 
 model Prova {
-  id            Int          @id @default(autoincrement())
-  titulo        String
-  totalQuestoes Int
-  status        StatusProva  @default(RASCUNHO)
-  criadoEm      DateTime     @default(now())
-  atualizadoEm  DateTime     @updatedAt
+  id             Int          @id @default(autoincrement())
+  titulo         String
+  totalQuestoes  Int
+  status         StatusProva  @default(RASCUNHO)
+  criadoEm       DateTime     @default(now())
+  atualizadoEm   DateTime     @updatedAt
 
-  professorId   Int
-  professor     Usuario      @relation(fields: [professorId], references: [id])
+  professorId    Int
+  professor      Usuario      @relation(fields: [professorId], references: [id])
 
-  disciplinaId  Int
-  disciplina    Disciplina   @relation(fields: [disciplinaId], references: [id])
+  disciplinaId   Int
+  disciplina     Disciplina   @relation(fields: [disciplinaId], references: [id])
 
-  questoes      Questao[]
+  turmaId        Int?
+  turma          Turma?       @relation(fields: [turmaId], references: [id])
+
+  questoes       Questao[]
 }
 
 model Questao {
   id            Int      @id @default(autoincrement())
   numero        Int
   enunciado     String?
-
   alternativaA  String?
   alternativaB  String?
   alternativaC  String?
   alternativaD  String?
   alternativaE  String?
-
   resposta      String?
 
   provaId       Int
