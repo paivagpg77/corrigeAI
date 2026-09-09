@@ -3,6 +3,7 @@ import cors from "cors";
 
 import authRoutes from "./routes/authRoutes.js";
 import provaRoutes from "./routes/provaRoutes.js";
+import turmaRoutes from "./routes/turmaRoutes.js";
 
 const app = express();
 
@@ -11,6 +12,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRoutes);
 app.use("/api/provas", provaRoutes);
+app.use("/api/turmas", turmaRoutes);
 
 app.get("/", (req, res) => {
     res.json({

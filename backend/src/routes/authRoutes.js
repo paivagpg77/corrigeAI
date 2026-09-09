@@ -6,7 +6,9 @@ import {
     me
 } from "../controllers/authController.js";
 
-import authMiddleware from "../middleware/authMiddleware.js";
+import {
+    autenticar
+} from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
@@ -14,6 +16,6 @@ router.post("/login", login);
 
 router.post("/cadastro", cadastrar);
 
-router.get("/me", authMiddleware, me);
+router.get("/me", autenticar, me);
 
 export default router;

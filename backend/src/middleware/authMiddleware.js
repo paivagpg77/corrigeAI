@@ -1,46 +1,55 @@
 import jwt from "jsonwebtoken";
 
-function authMiddleware(req, res, next) {
-
+export function autenticar(req, res, next) {
     try {
-        const authHeader = req.headers.authorization;
+        const authorization =
+            req.headers.authorization;
 
-        if (!authHeader) {
+        if (!authorization) {
             return res.status(401).json({
-                sucesso: false,
                 mensagem: "Token não informado."
             });
         }
 
-        const partes = authHeader.split(" ");
+        const partes =
+            authorization.split(" ");
 
-        if (partes.length !== 2 || partes[0] !== "Bearer") {
+        if (
+            partes.length !== 2 ||
+            partes[0] !== "Bearer"
+        ) {
             return res.status(401).json({
-                sucesso: false,
                 mensagem: "Formato de token inválido."
             });
         }
 
         const token = partes[1];
 
-        const usuario = jwt.verify(
-            token,
-            process.env.JWT_SECRET
-        );
+        const secret = process.env.JWT_SECRET;
 
-        req.usuario = usuario;
+        if (!secret) {
+            return res.status(500).json({
+                mensagem:
+                    "JWT_SECRET não configurado."
+            });
+        }
+
+        const payload =
+            jwt.verify(token, secret);
+
+        req.usuario = payload;
 
         next();
 
     } catch (error) {
-
-        console.error("ERRO AUTH:", error);
+        console.error(
+            "Erro de autenticação:",
+            error.message
+        );
 
         return res.status(401).json({
-            sucesso: false,
-            mensagem: "Token inválido ou expirado."
+            mensagem:
+                "Token inválido ou expirado."
         });
     }
 }
-
-export default authMiddleware;
