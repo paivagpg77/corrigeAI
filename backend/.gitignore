@@ -1,6 +1,9 @@
 node_modules/
-dist/
 .env
-uploads/*
-!.gitkeep
-prisma/*.db
+.env.*
+!.env.example
+uploads/
+dist/
+.venv/
+__pycache__/
+*.log
